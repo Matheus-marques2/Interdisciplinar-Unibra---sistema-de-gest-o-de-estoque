@@ -1,7 +1,21 @@
 {
+  "name": "sistema-gestao-estoque",
+  "version": "1.0.0",
+  "description": "Sistema de gestão de estoque e PDV (MercaFácil) - Projeto Interdisciplinar Unibra",
+  "main": "backend/src/server.js",
+  "scripts": {
+    "start": "node backend/src/server.js",
+    "dev": "nodemon backend/src/server.js"
+  },
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.5",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
-    "express-validator": "^7.3.2"
+    "express-validator": "^7.3.2",
+    "mysql2": "^3.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
   }
 }
