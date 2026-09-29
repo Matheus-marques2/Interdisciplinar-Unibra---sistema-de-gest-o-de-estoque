@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>PDV - Vendas</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+</head>
+
+<body>
+
+<div class="container-fluid">
+
+    <div class="row">
+
+        <!-- Menu lateral -->
+        <div class="col-2 bg-dark text-white min-vh-100 p-3 d-flex flex-column">
+
+            <h3>Mercado</h3>
+
+            <hr>
+
+            <a href="Dashboard.html" class="d-block text-white mb-3">Dashboard</a>
+            <a href="Pdv.html" class="d-block text-white mb-3 fw-bold">PDV - Vendas</a>
+            <a href="Produtos.html" class="d-block text-white mb-3">Produtos</a>
+            <a href="Estoque.html" class="d-block text-white mb-3">Estoque</a>
+            <a href="Fornecedor.html" class="d-block text-white">Fornecedor</a>
+
+            <div class="mt-auto pt-3">
+                <hr>
+                <small id="usuarioLogado" class="d-block mb-2 text-white-50">Carregando...</small>
+                <button onclick="sair()" class="btn btn-outline-light btn-sm w-100">Sair</button>
+            </div>
+
+        </div>
+
+
+        <!-- CONTEÚDO -->
+        <div class="col-7 p-4">
+
+            <h1>Ponto de Venda (PDV)</h1>
+            <p class="text-muted">Registre vendas escaneando código de barras ou selecionando produtos</p>
+
+            <hr>
+
+            <div id="mensagemErro" class="alert alert-danger d-none" role="alert"></div>
+
+            <form id="formBarcode" class="input-group mb-4">
+                <input type="text" id="campoCodigoBarras" class="form-control"
+                       placeholder="Escaneie ou digite o código de barras..." autofocus>
+                <button type="submit" class="btn btn-success">Adicionar</button>
+            </form>
+
+            <h5>Selecione os Produtos</h5>
+            <input type="search" id="campoBusca" class="form-control mb-3" placeholder="Buscar produto...">
+
+            <div id="grade" class="row g-2">
+                <p class="text-muted">Carregando produtos...</p>
+            </div>
+
+        </div>
+
+
+        <!-- CARRINHO -->
+        <div class="col-3 bg-light p-4 min-vh-100 border-start">
+
+            <h4>Carrinho</h4>
+            <hr>
+
+            <div id="carrinhoVazio" class="text-center text-muted mt-5">
+                <p>Carrinho vazio</p>
+            </div>
+
+            <ul id="listaCarrinho" class="list-group mb-3"></ul>
+
+            <div id="resumoCarrinho" class="d-none">
+
+                <div class="d-flex justify-content-between fw-bold fs-5 mb-3">
+                    <span>Total</span>
+                    <span id="totalCarrinho">R$ 0,00</span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Forma de pagamento</label>
+                    <select id="formaPagamento" class="form-select">
+                        <option value="dinheiro">Dinheiro</option>
+                        <option value="cartao_credito">Cartão de crédito</option>
+                        <option value="cartao_debito">Cartão de débito</option>
+                        <option value="pix">Pix</option>
+                    </select>
+                </div>
+
+                <button id="botaoFinalizar" class="btn btn-primary w-100 mb-2">Finalizar Venda</button>
+                <button id="botaoLimparCarrinho" class="btn btn-outline-secondary w-100">Limpar carrinho</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="../js/api/api.js"></script>
+<script src="../js/util.js"></script>
+<script src="../js/auth/session.js"></script>
+<script src="../js/vendas/pdv.js"></script>
+
+</body>
+</html>

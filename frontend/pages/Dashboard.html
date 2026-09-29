@@ -16,23 +16,23 @@
     <div class="row">
 
         <!-- Sidebar -->
-        <div class="col-2 bg-dark text-white min-vh-100 p-3">
+        <div class="col-2 bg-dark text-white min-vh-100 p-3 d-flex flex-column">
 
             <h3>Mercado</h3>
 
             <hr>
 
-            <a href="" class="d-block text-white mb-3">
-                Dashboard
-            </a>
+            <a href="Dashboard.html" class="d-block text-white mb-3 fw-bold">Dashboard</a>
+            <a href="Pdv.html" class="d-block text-white mb-3">PDV - Vendas</a>
+            <a href="Produtos.html" class="d-block text-white mb-3">Produtos</a>
+            <a href="Estoque.html" class="d-block text-white mb-3">Estoque</a>
+            <a href="Fornecedor.html" class="d-block text-white">Fornecedor</a>
 
-            <a href="Estoque.html" class="d-block text-white mb-3">
-                Estoque
-            </a>
-
-            <a href="Fornecedor.html" class="d-block text-white">
-                Fornecedor
-            </a>
+            <div class="mt-auto pt-3">
+                <hr>
+                <small id="usuarioLogado" class="d-block mb-2 text-white-50">Carregando...</small>
+                <button onclick="sair()" class="btn btn-outline-light btn-sm w-100">Sair</button>
+            </div>
 
         </div>
 
@@ -44,27 +44,29 @@
 
             <hr>
 
+            <div id="mensagemErro" class="alert alert-danger d-none" role="alert"></div>
+
             <!-- Cards -->
             <div class="row">
 
                 <div class="col">
                     <div class="card p-3">
                         <h5>Vendas hoje</h5>
-                        <h3>R$ 5.000</h3>
+                        <h3 id="vendasHoje">R$ 0,00</h3>
                     </div>
                 </div>
 
                 <div class="col">
                     <div class="card p-3">
-                        <h5>Produtos em estoque</h5>
-                        <h3>250</h3>
+                        <h5>Itens em estoque</h5>
+                        <h3 id="itensEstoque">0</h3>
                     </div>
                 </div>
 
                 <div class="col">
                     <div class="card p-3">
-                        <h5>Fornecedores</h5>
-                        <h3>23</h3>
+                        <h5>Valor do estoque</h5>
+                        <h3 id="valorEstoque">R$ 0,00</h3>
                     </div>
                 </div>
 
@@ -72,35 +74,39 @@
 
             <br>
 
-            <!-- Produtos -->
+            <!-- Produtos com estoque baixo -->
             <h2>Produtos com estoque baixo</h2>
 
             <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Estoque atual</th>
+                        <th>Estoque mínimo</th>
+                    </tr>
+                </thead>
+                <tbody id="corpoEstoqueBaixo">
+                    <tr><td colspan="3" class="text-center text-muted">Carregando...</td></tr>
+                </tbody>
+            </table>
 
-                <tr>
-                    <th>Produto</th>
-                    <th>Preço</th>
-                    <th>Estoque</th>
-                </tr>
+            <br>
 
-                <tr>
-                    <td>Arroz</td>
-                    <td>R$ 25,00</td>
-                    <td>5</td>
-                </tr>
+            <!-- Vendas recentes -->
+            <h2>Vendas recentes</h2>
 
-                <tr>
-                    <td>Feijão</td>
-                    <td>R$ 8,00</td>
-                    <td>3</td>
-                </tr>
-
-                <tr>
-                    <td>Leite</td>
-                    <td>R$ 5,50</td>
-                    <td>2</td>
-                </tr>
-
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Venda</th>
+                        <th>Data</th>
+                        <th>Itens</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="corpoVendasRecentes">
+                    <tr><td colspan="4" class="text-center text-muted">Carregando...</td></tr>
+                </tbody>
             </table>
 
         </div>
@@ -108,6 +114,11 @@
     </div>
 
 </div>
+
+<script src="../js/api/api.js"></script>
+<script src="../js/util.js"></script>
+<script src="../js/auth/session.js"></script>
+<script src="../js/dashboard/dashboard.js"></script>
 
 </body>
 </html>
