@@ -1,6 +1,16 @@
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 
+console.log("[DB CONFIG]", {
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  database: process.env.DB_NAME,
+  hasPassword: !!process.env.DB_PASSWORD,
+  passwordLength: process.env.DB_PASSWORD?.length,
+  ssl: process.env.DB_SSL
+});
+
 // Pool de conexões: reaproveita conexões em vez de abrir uma nova a cada query.
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
@@ -22,41 +32,14 @@ const pool = mysql.createPool({
 });
 
 // Testa a conexão assim que o módulo é carregado (útil para detectar erro de config cedo).
-//async function testarConexao() {
-//  try {
-//    const conn = await pool.getConnection();
-//    console.log('[database] Conectado ao MySQL com sucesso.');
-//    conn.release();
-//  } catch (err) {
-//    console.error('[database] Falha ao conectar ao MySQL:', err.message);
-//  }
-//}
-
 async function testarConexao() {
-    try {
-        console.log('[database] Configuração:', {
-            host: process.env.DB_HOST,
-            port: process.env.DB_PORT,
-            user: process.env.DB_USER,
-            database: process.env.DB_NAME,
-            passwordExiste: !!process.env.DB_PASSWORD,
-            passwordLength: process.env.DB_PASSWORD?.length,
-            ssl: process.env.DB_SSL
-        });
-
-        const conn = await pool.getConnection();
-
-        console.log('[database] Conectado ao MySQL com sucesso.');
-
-        conn.release();
-    } catch (err) {
-        console.error('[database] Falha ao conectar ao MySQL:', {
-            message: err.message,
-            code: err.code,
-            errno: err.errno,
-            sqlState: err.sqlState
-        });
-    }
+  try {
+    const conn = await pool.getConnection();
+    console.log('[database] Conectado ao MySQL com sucesso.');
+    conn.release();
+  } catch (err) {
+    console.error('[database] Falha ao conectar ao MySQL:', err.message);
+  }
 }
 
 testarConexao();
