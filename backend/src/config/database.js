@@ -8,10 +8,6 @@ console.log("[DB PASSWORD DEBUG]", {
   endsWith: process.env.DB_PASSWORD?.slice(-5)
 });
 
-console.log("[DB USER DEBUG]", {
-  value: JSON.stringify(process.env.DB_USER),
-  length: process.env.DB_USER?.length
-});
 
 // Pool de conexões: reaproveita conexões em vez de abrir uma nova a cada query.
 const pool = mysql.createPool({
