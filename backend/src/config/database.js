@@ -9,9 +9,16 @@ const pool = mysql.createPool({
   password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME || 'mercafacil',
   waitForConnections: true,
-  connectionLimit: 10,
+  // Em ambiente serverless (Vercel) cada execução pode abrir seu próprio pool,
+  // então mantemos esse número baixo para não esgotar o limite de conexões
+  // simultâneas do plano gratuito do banco (ex: Aiven free tier).
+  connectionLimit: Number(process.env.DB_CONNECTION_LIMIT) || 5,
   queueLimit: 0,
   dateStrings: true, // evita conversão automática de DATE/DATETIME para objeto Date do JS
+  // Bancos gerenciados (Aiven, PlanetScale, etc.) normalmente exigem SSL.
+  // rejectUnauthorized: false é aceitável para projeto acadêmico; em produção
+  // real, o ideal é validar com o certificado CA fornecido pelo provedor.
+  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : undefined,
 });
 
 // Testa a conexão assim que o módulo é carregado (útil para detectar erro de config cedo).

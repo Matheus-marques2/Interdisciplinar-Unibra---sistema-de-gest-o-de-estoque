@@ -20,12 +20,10 @@ async function login(req, res, next) {
   }
 }
 
-function logout(req, res, next) {
-  req.session.destroy((err) => {
-    if (err) return next(err);
-    res.clearCookie('connect.sid');
-    res.status(204).send();
-  });
+function logout(req, res) {
+  // cookie-session: atribuir null apaga o cookie de sessão no navegador.
+  req.session = null;
+  res.status(204).send();
 }
 
 async function me(req, res, next) {

@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs'); // implementação 100% JS — evita binário nativo em build serverless
 const usuarioModel = require('../models/usuarioModel');
 const ServiceError = require('../utils/ServiceError');
 
