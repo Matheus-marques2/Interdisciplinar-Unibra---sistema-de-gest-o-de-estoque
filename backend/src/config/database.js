@@ -1,6 +1,12 @@
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 
+console.log("[DB PASSWORD DEBUG]", {
+  exists: !!process.env.DB_PASSWORD,
+  length: process.env.DB_PASSWORD?.length,
+  startsWith: process.env.DB_PASSWORD?.slice(0, 5),
+  endsWith: process.env.DB_PASSWORD?.slice(-5)
+});
 
 console.log("[DB USER DEBUG]", {
   value: JSON.stringify(process.env.DB_USER),
