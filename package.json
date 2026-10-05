@@ -4,7 +4,7 @@
   "description": "Sistema de gestão de estoque e PDV (MercaFácil) - Projeto Interdisciplinar Unibra",
   "main": "backend/src/server.js",
   "engines": {
-    "node": "20.x"
+    "node": "24.x"
   },
   "scripts": {
     "start": "node backend/src/server.js",
