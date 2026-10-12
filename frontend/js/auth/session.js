@@ -8,6 +8,12 @@ async function protegerPagina() {
     if (elementoNome) {
       elementoNome.textContent = `${usuario.nome} (${usuario.cargo})`;
     }
+
+    const linkAuditoria = document.getElementById('linkAuditoria');
+    if (linkAuditoria) {
+      linkAuditoria.classList.toggle('d-none', usuario.cargo !== 'admin');
+    }
+
     return usuario;
   } catch (erro) {
     window.location.href = 'Login.html';

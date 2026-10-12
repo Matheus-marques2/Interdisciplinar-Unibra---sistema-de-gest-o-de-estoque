@@ -1,4 +1,5 @@
 let fornecedoresCache = [];
+let ehAdmin = false;
 
 async function carregarFornecedores() {
   const corpo = document.getElementById('corpoFornecedores');
@@ -27,6 +28,13 @@ function renderizarFornecedores(lista) {
       const localizacao = [fornecedor.cidade, fornecedor.estado].filter(Boolean).join(' - ') || '-';
       const contato = [fornecedor.telefone, fornecedor.email].filter(Boolean).join(' / ') || '-';
 
+      const acoes = ehAdmin
+        ? `
+            <button class="btn btn-sm btn-outline-primary" onclick="editarFornecedor(${fornecedor.id})">Editar</button>
+            <button class="btn btn-sm btn-outline-danger" onclick="excluirFornecedor(${fornecedor.id})">Excluir</button>
+          `
+        : '<span class="text-muted">-</span>';
+
       return `
         <tr>
           <td>${escapeHtml(fornecedor.cnpj)}</td>
@@ -36,10 +44,7 @@ function renderizarFornecedores(lista) {
           </td>
           <td>${escapeHtml(contato)}</td>
           <td>${escapeHtml(localizacao)}</td>
-          <td>
-            <button class="btn btn-sm btn-outline-primary" onclick="editarFornecedor(${fornecedor.id})">Editar</button>
-            <button class="btn btn-sm btn-outline-danger" onclick="excluirFornecedor(${fornecedor.id})">Excluir</button>
-          </td>
+          <td>${acoes}</td>
         </tr>
       `;
     })
@@ -140,5 +145,11 @@ document.getElementById('campoBusca').addEventListener('input', (evento) => {
 
 (async () => {
   const usuario = await protegerPagina();
-  if (usuario) await carregarFornecedores();
+  if (!usuario) return;
+
+  ehAdmin = usuario.cargo === 'admin';
+  document.getElementById('areaFormulario').classList.toggle('d-none', !ehAdmin);
+  document.getElementById('avisoSomenteLeitura').classList.toggle('d-none', ehAdmin);
+
+  await carregarFornecedores();
 })();

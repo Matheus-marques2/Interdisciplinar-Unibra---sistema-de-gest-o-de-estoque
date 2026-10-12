@@ -1,4 +1,5 @@
 let produtosCache = [];
+let ehAdmin = false;
 
 async function carregarFornecedoresNoSelect() {
   const select = document.getElementById('fornecedor_id');
@@ -44,6 +45,13 @@ function renderizarProdutos(lista) {
         ? `<span class="badge bg-danger">${produto.estoque}</span>`
         : `<span class="badge bg-success">${produto.estoque}</span>`;
 
+      const acoes = ehAdmin
+        ? `
+            <button class="btn btn-sm btn-outline-primary" onclick="editarProduto(${produto.id})">Editar</button>
+            <button class="btn btn-sm btn-outline-danger" onclick="excluirProduto(${produto.id})">Excluir</button>
+          `
+        : '<span class="text-muted">-</span>';
+
       return `
         <tr>
           <td>${escapeHtml(produto.codigo_barras)}</td>
@@ -52,10 +60,7 @@ function renderizarProdutos(lista) {
           <td>${escapeHtml(produto.categoria) || '-'}</td>
           <td>${formatarMoeda(produto.preco)}</td>
           <td>${badgeEstoque}</td>
-          <td>
-            <button class="btn btn-sm btn-outline-primary" onclick="editarProduto(${produto.id})">Editar</button>
-            <button class="btn btn-sm btn-outline-danger" onclick="excluirProduto(${produto.id})">Excluir</button>
-          </td>
+          <td>${acoes}</td>
         </tr>
       `;
     })
@@ -163,8 +168,12 @@ document.getElementById('campoBusca').addEventListener('input', (evento) => {
 
 (async () => {
   const usuario = await protegerPagina();
-  if (usuario) {
-    await carregarFornecedoresNoSelect();
-    await carregarProdutos();
-  }
+  if (!usuario) return;
+
+  ehAdmin = usuario.cargo === 'admin';
+  document.getElementById('areaFormulario').classList.toggle('d-none', !ehAdmin);
+  document.getElementById('avisoSomenteLeitura').classList.toggle('d-none', ehAdmin);
+
+  await carregarFornecedoresNoSelect();
+  await carregarProdutos();
 })();
