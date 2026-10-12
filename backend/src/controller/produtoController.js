@@ -1,4 +1,5 @@
 const produtoService = require('../services/produtoService');
+const { registrarAuditoria } = require('../utils/auditoria');
 
 async function listar(req, res, next) {
   try {
@@ -40,6 +41,12 @@ async function estoqueBaixo(req, res, next) {
 async function criar(req, res, next) {
   try {
     const produto = await produtoService.criarProduto(req.body);
+    await registrarAuditoria(req, {
+      acao: 'criar',
+      entidade: 'produto',
+      entidade_id: produto.id,
+      detalhes: `Produto "${produto.nome}" criado`,
+    });
     res.status(201).json(produto);
   } catch (err) {
     next(err);
@@ -49,6 +56,12 @@ async function criar(req, res, next) {
 async function atualizar(req, res, next) {
   try {
     const produto = await produtoService.atualizarProduto(req.params.id, req.body);
+    await registrarAuditoria(req, {
+      acao: 'atualizar',
+      entidade: 'produto',
+      entidade_id: produto.id,
+      detalhes: `Produto "${produto.nome}" atualizado`,
+    });
     res.json(produto);
   } catch (err) {
     next(err);
@@ -57,7 +70,14 @@ async function atualizar(req, res, next) {
 
 async function remover(req, res, next) {
   try {
+    const produto = await produtoService.buscarProduto(req.params.id); // pega o nome antes de apagar, pra log ficar legível
     await produtoService.removerProduto(req.params.id);
+    await registrarAuditoria(req, {
+      acao: 'remover',
+      entidade: 'produto',
+      entidade_id: Number(req.params.id),
+      detalhes: `Produto "${produto.nome}" removido`,
+    });
     res.status(204).send();
   } catch (err) {
     next(err);

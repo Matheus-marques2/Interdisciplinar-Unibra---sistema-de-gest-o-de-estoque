@@ -15,7 +15,8 @@ async function buscarPorId(id) {
 
 async function criar({ nome, email, senhaHash, cargo }) {
   const [result] = await db.query(
-    'INSERT INTO usuarios (nome, email, senha, cargo) VALUES (?, ?, ?, ?)',
+    `INSERT INTO usuarios (nome, email, senha, cargo, termos_aceitos_em)
+     VALUES (?, ?, ?, ?, NOW())`,
     [nome, email, senhaHash, cargo || 'operador']
   );
   return buscarPorId(result.insertId);

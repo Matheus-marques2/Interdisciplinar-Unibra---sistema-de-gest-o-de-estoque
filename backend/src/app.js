@@ -8,6 +8,7 @@ const produtoRoute = require('./routes/produtoRoute');
 const fornecedorRoute = require('./routes/fornecedorRoute');
 const vendaRoute = require('./routes/vendaRoute');
 const estoqueRoute = require('./routes/estoqueRoute');
+const auditoriaRoute = require('./routes/auditoriaRoute');
 const { errorHandler, rotaNaoEncontrada } = require('./middleware/errorMiddleware');
 
 const app = express();
@@ -46,6 +47,7 @@ app.use('/api/produtos', produtoRoute);
 app.use('/api/fornecedores', fornecedorRoute);
 app.use('/api/vendas', vendaRoute);
 app.use('/api/estoque', estoqueRoute);
+app.use('/api/auditoria', auditoriaRoute);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 

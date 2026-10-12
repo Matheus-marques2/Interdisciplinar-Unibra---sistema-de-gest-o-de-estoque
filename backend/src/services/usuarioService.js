@@ -4,12 +4,17 @@ const ServiceError = require('../utils/ServiceError');
 
 const SALT_ROUNDS = 10;
 
-async function registrar({ nome, email, senha, cargo }) {
+async function registrar({ nome, email, senha, cargo, aceite_termos }) {
   if (!nome || !email || !senha) {
     throw new ServiceError('Nome, email e senha são obrigatórios.');
   }
   if (senha.length < 6) {
     throw new ServiceError('A senha deve ter pelo menos 6 caracteres.');
+  }
+  // LGPD (base legal): sem aceite explícito da política de privacidade, não há
+  // consentimento válido para tratar os dados pessoais - o cadastro é recusado.
+  if (aceite_termos !== true) {
+    throw new ServiceError('É necessário aceitar a Política de Privacidade para se cadastrar.');
   }
 
   const existente = await usuarioModel.buscarPorEmail(email);
