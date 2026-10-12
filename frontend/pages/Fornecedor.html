@@ -7,6 +7,86 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --cinza-escuro: #1f3d2e;
+            --cinza: #3f7a57;
+        }
+
+        /* ---------- Sidebar ---------- */
+        .sidebar { font-family: 'DM Sans', system-ui, sans-serif;
+            background: var(--cinza-escuro);
+            color: #fff;
+        }
+
+        @media (min-width: 992px) {
+            .sidebar { position: sticky; top: 0; height: 100vh; }
+        }
+
+        .marca {
+            font-size: 1.35rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+        }
+
+        .marca i {
+            background: var(--cinza);
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            font-size: 1.1rem;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            padding: .65rem .85rem;
+            border-radius: 10px;
+            color: rgba(255, 255, 255, .72);
+            text-decoration: none;
+            font-weight: 500;
+            transition: background .15s, color .15s;
+        }
+
+        .menu-link:hover { background: rgba(255, 255, 255, .08); color: #fff; }
+
+        .menu-link.ativo {
+            background: #fff;
+            color: var(--cinza-escuro);
+            font-weight: 700;
+        }
+
+        .menu-link:focus-visible,
+        .sidebar .btn:focus-visible { outline: 3px solid #a9d4b9; outline-offset: 2px; }
+
+        .usuario {
+            background: rgba(255, 255, 255, .07);
+            border-radius: 12px;
+            padding: .8rem;
+        }
+
+        /* ---------- Botões verdes ---------- */
+        .btn-primary {
+            --bs-btn-bg: #2e7d4f;
+            --bs-btn-border-color: #2e7d4f;
+            --bs-btn-hover-bg: #256b43;
+            --bs-btn-hover-border-color: #256b43;
+            --bs-btn-active-bg: #1f5c3a;
+            --bs-btn-active-border-color: #1f5c3a;
+            --bs-btn-disabled-bg: #2e7d4f;
+            --bs-btn-disabled-border-color: #2e7d4f;
+            --bs-btn-focus-shadow-rgb: 46, 125, 79;
+        }
+    </style>
 </head>
 
 <body>
@@ -16,29 +96,38 @@
     <div class="row">
 
         <!-- Menu lateral -->
-        <div class="col-2 bg-dark text-white min-vh-100 p-3 d-flex flex-column">
+        <aside class="col-12 col-lg-2 sidebar p-3 d-flex flex-column">
 
-            <h3>Mercado</h3>
-
-            <hr>
-
-            <a href="Dashboard.html" class="d-block text-white mb-3">Dashboard</a>
-            <a href="Pdv.html" class="d-block text-white mb-3">PDV - Vendas</a>
-            <a href="Produtos.html" class="d-block text-white mb-3">Produtos</a>
-            <a href="Estoque.html" class="d-block text-white mb-3">Estoque</a>
-            <a href="Fornecedor.html" class="d-block text-white fw-bold">Fornecedor</a>
-
-            <div class="mt-auto pt-3">
-                <hr>
-                <small id="usuarioLogado" class="d-block mb-2 text-white-50">Carregando...</small>
-                <button onclick="sair()" class="btn btn-outline-light btn-sm w-100">Sair</button>
+            <div class="marca mb-3 mb-lg-4">
+                <i class="bi bi-basket2-fill"></i>
+                <span>Mercado</span>
             </div>
 
-        </div>
+            <nav class="d-flex flex-row flex-lg-column flex-wrap gap-1" aria-label="Menu principal">
+                <a href="Dashboard.html" class="menu-link"><i class="bi bi-speedometer2"></i>Dashboard</a>
+                <a href="Pdv.html" class="menu-link"><i class="bi bi-cart3"></i>PDV - Vendas</a>
+                <a href="Produtos.html" class="menu-link"><i class="bi bi-box-seam"></i>Produtos</a>
+                <a href="Estoque.html" class="menu-link"><i class="bi bi-boxes"></i>Estoque</a>
+                <a href="Fornecedor.html" class="menu-link ativo"><i class="bi bi-truck"></i>Fornecedor</a>
+            </nav>
+
+            <div class="mt-3 mt-lg-auto">
+                <div class="usuario">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="bi bi-person-circle fs-4"></i>
+                        <small id="usuarioLogado" class="text-white-50">Carregando...</small>
+                    </div>
+                    <button onclick="sair()" class="btn btn-outline-light btn-sm w-100">
+                        <i class="bi bi-box-arrow-right me-1"></i>Sair
+                    </button>
+                </div>
+            </div>
+
+        </aside>
 
 
         <!-- CONTEÚDO -->
-        <div class="col-10 p-4">
+        <div class="col-12 col-lg-10 p-4">
 
             <h1>Fornecedor</h1>
 
@@ -48,10 +137,53 @@
             <div id="mensagemSucesso" class="alert alert-success d-none" role="alert"></div>
 
 
-            <!-- FORMULÁRIO -->
-            <h2 id="tituloFormulario">Adicionar Fornecedor</h2>
+            <!-- LISTAGEM -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="mb-0">Fornecedores cadastrados</h2>
 
-            <form id="formFornecedor" class="row g-3">
+                <div class="d-flex gap-2 w-50 justify-content-end">
+                    <input type="search" id="campoBusca" class="form-control w-50" placeholder="Buscar fornecedor...">
+                    <button type="button" id="botaoNovoFornecedor" class="btn btn-primary text-nowrap">Novo fornecedor</button>
+                </div>
+            </div>
+
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>CNPJ</th>
+                        <th>Fornecedor</th>
+                        <th>Contato</th>
+                        <th>Localização</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="corpoFornecedores">
+                    <tr><td colspan="5" class="text-center text-muted">Carregando...</td></tr>
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- POPOUT: cadastrar / editar fornecedor -->
+<div class="modal fade" id="modalFornecedor" tabindex="-1" aria-labelledby="tituloFormulario" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h2 class="modal-title fs-4" id="tituloFormulario">Adicionar Fornecedor</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <div id="erroModal" class="alert alert-danger d-none" role="alert"></div>
+
+                <form id="formFornecedor" class="row g-3">
 
                 <input type="hidden" id="fornecedorId">
 
@@ -97,39 +229,64 @@
 
             </form>
 
-            <hr class="my-4">
-
-            <!-- LISTAGEM -->
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2 class="mb-0">Fornecedores cadastrados</h2>
-                <input type="search" id="campoBusca" class="form-control w-25" placeholder="Buscar fornecedor...">
             </div>
 
-            <table class="table table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th>CNPJ</th>
-                        <th>Fornecedor</th>
-                        <th>Contato</th>
-                        <th>Localização</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="corpoFornecedores">
-                    <tr><td colspan="5" class="text-center text-muted">Carregando...</td></tr>
-                </tbody>
-            </table>
-
         </div>
-
     </div>
-
 </div>
 
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../js/api/api.js"></script>
 <script src="../js/util.js"></script>
 <script src="../js/auth/session.js"></script>
 <script src="../js/fornecedores/fornecedores.js"></script>
+
+<script>
+    // Popout de cadastro/edição — funciona por cima do fornecedores.js, sem alterá-lo
+    (function () {
+        const el = document.getElementById('modalFornecedor');
+        const modal = new bootstrap.Modal(el);
+        const form = document.getElementById('formFornecedor');
+        const cancelar = document.getElementById('botaoCancelar');
+        const salvar = document.getElementById('botaoSalvar');
+        const titulo = document.getElementById('tituloFormulario');
+        const sucesso = document.getElementById('mensagemSucesso');
+        const erro = document.getElementById('mensagemErro');
+        const erroModal = document.getElementById('erroModal');
+        const editando = () => !cancelar.classList.contains('d-none');
+
+        // Novo fornecedor: limpa qualquer edição em andamento e abre o popout
+        document.getElementById('botaoNovoFornecedor').addEventListener('click', () => {
+            if (editando()) cancelar.click();
+            form.reset();
+            document.getElementById('fornecedorId').value = '';
+            titulo.textContent = 'Adicionar Fornecedor';
+            salvar.textContent = 'Cadastrar';
+            erroModal.classList.add('d-none');
+            modal.show();
+        });
+
+        // Clicou em editar na tabela: o fornecedores.js mostra "Cancelar edição" e o popout abre
+        new MutationObserver(() => { editando() ? modal.show() : modal.hide(); })
+            .observe(cancelar, { attributes: true, attributeFilter: ['class'] });
+
+        // Salvou com sucesso: fecha o popout
+        new MutationObserver(() => {
+            if (!sucesso.classList.contains('d-none')) modal.hide();
+        }).observe(sucesso, { attributes: true, attributeFilter: ['class'] });
+
+        // Erro durante o cadastro: mostra dentro do popout, onde a pessoa está olhando
+        new MutationObserver(() => {
+            const visivel = !erro.classList.contains('d-none') && erro.textContent.trim();
+            erroModal.textContent = visivel ? erro.textContent : '';
+            erroModal.classList.toggle('d-none', !visivel || !el.classList.contains('show'));
+        }).observe(erro, { attributes: true, childList: true, characterData: true, subtree: true });
+
+        // Fechou o popout no meio de uma edição: cancela a edição
+        el.addEventListener('hidden.bs.modal', () => { if (editando()) cancelar.click(); });
+    })();
+</script>
 
 </body>
 </html>

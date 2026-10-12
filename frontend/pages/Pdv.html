@@ -7,6 +7,87 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --cinza-escuro: #1f3d2e;
+            --cinza: #3f7a57;
+        }
+
+        /* ---------- Sidebar ---------- */
+        .sidebar { font-family: 'DM Sans', system-ui, sans-serif;
+            background: var(--cinza-escuro);
+            color: #fff;
+        }
+
+        @media (min-width: 992px) {
+            .sidebar { position: sticky; top: 0; height: 100vh; }
+        }
+
+        .marca {
+            font-size: 1.35rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+        }
+
+        .marca i {
+            background: var(--cinza);
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            font-size: 1.1rem;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            padding: .65rem .85rem;
+            border-radius: 10px;
+            color: rgba(255, 255, 255, .72);
+            text-decoration: none;
+            font-weight: 500;
+            transition: background .15s, color .15s;
+        }
+
+        .menu-link:hover { background: rgba(255, 255, 255, .08); color: #fff; }
+
+        .menu-link.ativo {
+            background: #fff;
+            color: var(--cinza-escuro);
+            font-weight: 700;
+        }
+
+        .menu-link:focus-visible,
+        .sidebar .btn:focus-visible { outline: 3px solid #a9d4b9; outline-offset: 2px; }
+
+        .usuario {
+            background: rgba(255, 255, 255, .07);
+            border-radius: 12px;
+            padding: .8rem;
+        }
+
+        /* ---------- Botões verdes ---------- */
+        .btn-primary {
+            --bs-btn-bg: #2e7d4f;
+            --bs-btn-border-color: #2e7d4f;
+            --bs-btn-hover-bg: #256b43;
+            --bs-btn-hover-border-color: #256b43;
+            --bs-btn-active-bg: #1f5c3a;
+            --bs-btn-active-border-color: #1f5c3a;
+            --bs-btn-disabled-bg: #2e7d4f;
+            --bs-btn-disabled-border-color: #2e7d4f;
+            --bs-btn-focus-shadow-rgb: 46, 125, 79;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -16,85 +97,93 @@
     <div class="row">
 
         <!-- Menu lateral -->
-        <div class="col-2 bg-dark text-white min-vh-100 p-3 d-flex flex-column">
+        <aside class="col-12 col-lg-2 sidebar p-3 d-flex flex-column">
 
-            <h3>Mercado</h3>
-
-            <hr>
-
-            <a href="Dashboard.html" class="d-block text-white mb-3">Dashboard</a>
-            <a href="Pdv.html" class="d-block text-white mb-3 fw-bold">PDV - Vendas</a>
-            <a href="Produtos.html" class="d-block text-white mb-3">Produtos</a>
-            <a href="Estoque.html" class="d-block text-white mb-3">Estoque</a>
-            <a href="Fornecedor.html" class="d-block text-white">Fornecedor</a>
-
-            <div class="mt-auto pt-3">
-                <hr>
-                <small id="usuarioLogado" class="d-block mb-2 text-white-50">Carregando...</small>
-                <button onclick="sair()" class="btn btn-outline-light btn-sm w-100">Sair</button>
+            <div class="marca mb-3 mb-lg-4">
+                <i class="bi bi-basket2-fill"></i>
+                <span>Mercado</span>
             </div>
 
-        </div>
+            <nav class="d-flex flex-row flex-lg-column flex-wrap gap-1" aria-label="Menu principal">
+                <a href="Dashboard.html" class="menu-link"><i class="bi bi-speedometer2"></i>Dashboard</a>
+                <a href="Pdv.html" class="menu-link ativo"><i class="bi bi-cart3"></i>PDV - Vendas</a>
+                <a href="Produtos.html" class="menu-link"><i class="bi bi-box-seam"></i>Produtos</a>
+                <a href="Estoque.html" class="menu-link"><i class="bi bi-boxes"></i>Estoque</a>
+                <a href="Fornecedor.html" class="menu-link"><i class="bi bi-truck"></i>Fornecedor</a>
+            </nav>
+
+            <div class="mt-3 mt-lg-auto">
+                <div class="usuario">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="bi bi-person-circle fs-4"></i>
+                        <small id="usuarioLogado" class="text-white-50">Carregando...</small>
+                    </div>
+                    <button onclick="sair()" class="btn btn-outline-light btn-sm w-100">
+                        <i class="bi bi-box-arrow-right me-1"></i>Sair
+                    </button>
+                </div>
+            </div>
+
+        </aside>
 
 
-        <!-- CONTEÚDO -->
-        <div class="col-7 p-4">
+        <!-- CONTEÚDO: apenas o carrinho -->
+        <div class="col-12 col-lg-10 p-4">
 
-            <h1>Ponto de Venda (PDV)</h1>
-            <p class="text-muted">Registre vendas escaneando código de barras ou selecionando produtos</p>
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                <div>
+                    <h1>Ponto de Venda (PDV)</h1>
+                    <p class="text-muted">Registre vendas escaneando código de barras ou selecionando produtos</p>
+                </div>
+
+                <button type="button" id="botaoAbrirProdutos" class="btn btn-success">Adicionar produtos</button>
+            </div>
 
             <hr>
 
             <div id="mensagemErro" class="alert alert-danger d-none" role="alert"></div>
 
-            <form id="formBarcode" class="input-group mb-4">
-                <input type="text" id="campoCodigoBarras" class="form-control"
-                       placeholder="Escaneie ou digite o código de barras..." autofocus>
-                <button type="submit" class="btn btn-success">Adicionar</button>
-            </form>
 
-            <h5>Selecione os Produtos</h5>
-            <input type="search" id="campoBusca" class="form-control mb-3" placeholder="Buscar produto...">
+            <!-- CARRINHO -->
+            <div class="row">
+                <div class="col-12 col-xl-8">
 
-            <div id="grade" class="row g-2">
-                <p class="text-muted">Carregando produtos...</p>
-            </div>
+                    <div class="bg-light border rounded p-4">
 
-        </div>
+                        <h4>Carrinho</h4>
+                        <hr>
 
+                        <div id="carrinhoVazio" class="text-center text-muted my-5">
+                            <p>Carrinho vazio</p>
+                        </div>
 
-        <!-- CARRINHO -->
-        <div class="col-3 bg-light p-4 min-vh-100 border-start">
+                        <ul id="listaCarrinho" class="list-group mb-3"></ul>
 
-            <h4>Carrinho</h4>
-            <hr>
+                        <div id="resumoCarrinho" class="d-none">
 
-            <div id="carrinhoVazio" class="text-center text-muted mt-5">
-                <p>Carrinho vazio</p>
-            </div>
+                            <div class="d-flex justify-content-between fw-bold fs-5 mb-3">
+                                <span>Total</span>
+                                <span id="totalCarrinho">R$ 0,00</span>
+                            </div>
 
-            <ul id="listaCarrinho" class="list-group mb-3"></ul>
+                            <div class="mb-3">
+                                <label class="form-label">Forma de pagamento</label>
+                                <select id="formaPagamento" class="form-select">
+                                    <option value="dinheiro">Dinheiro</option>
+                                    <option value="cartao_credito">Cartão de crédito</option>
+                                    <option value="cartao_debito">Cartão de débito</option>
+                                    <option value="pix">Pix</option>
+                                </select>
+                            </div>
 
-            <div id="resumoCarrinho" class="d-none">
+                            <button id="botaoFinalizar" class="btn btn-primary w-100 mb-2">Finalizar Venda</button>
+                            <button id="botaoLimparCarrinho" class="btn btn-outline-secondary w-100">Limpar carrinho</button>
 
-                <div class="d-flex justify-content-between fw-bold fs-5 mb-3">
-                    <span>Total</span>
-                    <span id="totalCarrinho">R$ 0,00</span>
+                        </div>
+
+                    </div>
+
                 </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Forma de pagamento</label>
-                    <select id="formaPagamento" class="form-select">
-                        <option value="dinheiro">Dinheiro</option>
-                        <option value="cartao_credito">Cartão de crédito</option>
-                        <option value="cartao_debito">Cartão de débito</option>
-                        <option value="pix">Pix</option>
-                    </select>
-                </div>
-
-                <button id="botaoFinalizar" class="btn btn-primary w-100 mb-2">Finalizar Venda</button>
-                <button id="botaoLimparCarrinho" class="btn btn-outline-secondary w-100">Limpar carrinho</button>
-
             </div>
 
         </div>
@@ -103,10 +192,89 @@
 
 </div>
 
+
+<!-- POPUP: escanear código de barras / selecionar produtos -->
+<div class="modal fade" id="modalProdutos" tabindex="-1" aria-labelledby="tituloModalProdutos" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h2 class="modal-title fs-4" id="tituloModalProdutos">Adicionar produtos</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <div id="erroModal" class="alert alert-danger d-none" role="alert"></div>
+
+                <form id="formBarcode" class="input-group mb-4">
+                    <input type="text" id="campoCodigoBarras" class="form-control"
+                           placeholder="Escaneie ou digite o código de barras...">
+                    <button type="submit" class="btn btn-success">Adicionar</button>
+                </form>
+
+                <h5>Selecione os Produtos</h5>
+                <input type="search" id="campoBusca" class="form-control mb-3" placeholder="Buscar produto...">
+
+                <div id="grade" class="row g-2">
+                    <p class="text-muted">Carregando produtos...</p>
+                </div>
+
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <span class="text-muted">
+                    <span id="resumoItensModal">0 itens</span> no carrinho &middot; <strong id="resumoTotalModal">R$ 0,00</strong>
+                </span>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Concluir</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../js/api/api.js"></script>
 <script src="../js/util.js"></script>
 <script src="../js/auth/session.js"></script>
 <script src="../js/vendas/pdv.js"></script>
+
+<script>
+    // Popup de produtos — funciona por cima do pdv.js, sem alterá-lo
+    (function () {
+        const el = document.getElementById('modalProdutos');
+        const modal = new bootstrap.Modal(el);
+        const campoCodigo = document.getElementById('campoCodigoBarras');
+        const erro = document.getElementById('mensagemErro');
+        const erroModal = document.getElementById('erroModal');
+        const lista = document.getElementById('listaCarrinho');
+        const total = document.getElementById('totalCarrinho');
+        const resumoItens = document.getElementById('resumoItensModal');
+        const resumoTotal = document.getElementById('resumoTotalModal');
+
+        document.getElementById('botaoAbrirProdutos').addEventListener('click', () => modal.show());
+
+        // Pronto para escanear assim que o popup abre
+        el.addEventListener('shown.bs.modal', () => campoCodigo.focus());
+
+        // Erros (ex.: código não encontrado) aparecem dentro do popup enquanto ele está aberto
+        new MutationObserver(() => {
+            const visivel = !erro.classList.contains('d-none') && erro.textContent.trim();
+            erroModal.textContent = visivel ? erro.textContent : '';
+            erroModal.classList.toggle('d-none', !visivel || !el.classList.contains('show'));
+        }).observe(erro, { attributes: true, childList: true, characterData: true, subtree: true });
+
+        // Resumo do carrinho no rodapé do popup
+        function atualizarResumo() {
+            const itens = lista.querySelectorAll('li').length;
+            resumoItens.textContent = itens === 1 ? '1 item' : itens + ' itens';
+            resumoTotal.textContent = itens > 0 ? total.textContent : 'R$ 0,00';
+        }
+        new MutationObserver(atualizarResumo).observe(lista, { childList: true });
+        new MutationObserver(atualizarResumo).observe(total, { childList: true, characterData: true, subtree: true });
+    })();
+</script>
 
 </body>
 </html>
