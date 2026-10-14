@@ -103,6 +103,7 @@ function renderizarCarrinho() {
     lista.innerHTML = '';
     vazio.classList.remove('d-none');
     resumo.classList.add('d-none');
+    atualizarPagamento();
     return;
   }
 
@@ -133,34 +134,132 @@ function renderizarCarrinho() {
 
   const total = carrinho.reduce((soma, item) => soma + item.preco * item.quantidade, 0);
   document.getElementById('totalCarrinho').textContent = formatarMoeda(total);
+  atualizarPagamento();
+}
+
+// ---------- Pagamento em dinheiro (valor recebido e troco) ----------
+// Os cálculos são feitos em centavos (inteiros) para evitar erro de ponto flutuante.
+function totalCarrinhoCentavos() {
+  return carrinho.reduce((soma, item) => soma + Math.round(Number(item.preco) * 100) * item.quantidade, 0);
+}
+
+function valorRecebidoCentavos() {
+  const bruto = document.getElementById('valorRecebido').value;
+  if (bruto === '') return null;
+  const numero = Number(bruto);
+  return Number.isFinite(numero) && numero >= 0 ? Math.round(numero * 100) : null;
+}
+
+function formatarCentavos(centavos) {
+  return formatarMoeda(centavos / 100);
+}
+
+// Mostra/esconde o campo de valor recebido conforme a forma de pagamento e
+// mostra o troco em tempo real. Bloqueia "Finalizar" se o valor não cobrir o total.
+function atualizarPagamento() {
+  const dinheiro = document.getElementById('formaPagamento').value === 'dinheiro';
+  const bloco = document.getElementById('blocoDinheiro');
+  const info = document.getElementById('infoTroco');
+  const botao = document.getElementById('botaoFinalizar');
+
+  bloco.classList.toggle('d-none', !dinheiro);
+
+  if (!dinheiro) {
+    botao.disabled = false;
+    return;
+  }
+
+  const total = totalCarrinhoCentavos();
+  const recebido = valorRecebidoCentavos();
+
+  if (recebido === null) {
+    info.className = 'form-text';
+    info.textContent = 'Informe o valor entregue pelo cliente.';
+    botao.disabled = true;
+  } else if (recebido < total) {
+    info.className = 'form-text text-danger fw-bold';
+    info.textContent = `Valor insuficiente: faltam ${formatarCentavos(total - recebido)}.`;
+    botao.disabled = true;
+  } else {
+    const troco = recebido - total;
+    info.className = 'fs-5 fw-bold text-success';
+    info.textContent = troco > 0 ? `Troco: ${formatarCentavos(troco)}` : 'Sem troco.';
+    botao.disabled = false;
+  }
+}
+
+const NOMES_PAGAMENTO = {
+  dinheiro: 'Dinheiro',
+  cartao_credito: 'Cartão de crédito',
+  cartao_debito: 'Cartão de débito',
+  pix: 'Pix',
+};
+
+// Popup final: mostra pro operador o total e, em dinheiro, o troco a devolver.
+function mostrarVendaConcluida(venda) {
+  document.getElementById('vcNumero').textContent = `Venda #${venda.id}`;
+  document.getElementById('vcTotal').textContent = formatarMoeda(venda.total);
+  document.getElementById('vcForma').textContent = NOMES_PAGAMENTO[venda.forma_pagamento] || venda.forma_pagamento;
+
+  const emDinheiro = venda.troco !== null && venda.troco !== undefined;
+  document.getElementById('vcLinhaRecebido').classList.toggle('d-none', !emDinheiro);
+  document.getElementById('vcLinhaTroco').classList.toggle('d-none', !emDinheiro);
+
+  if (emDinheiro) {
+    document.getElementById('vcRecebido').textContent = formatarMoeda(venda.valor_recebido);
+    document.getElementById('vcTroco').textContent =
+      Number(venda.troco) > 0 ? formatarMoeda(venda.troco) : 'Sem troco';
+  }
+
+  bootstrap.Modal.getOrCreateInstance(document.getElementById('modalVendaConcluida')).show();
 }
 
 function limparCarrinho() {
   carrinho = [];
+  document.getElementById('valorRecebido').value = '';
   renderizarCarrinho();
 }
+
+let finalizando = false; // evita clique duplo gerar duas vendas
 
 async function finalizarVenda() {
   const elementoErro = document.getElementById('mensagemErro');
   esconderErro(elementoErro);
 
-  if (carrinho.length === 0) return;
+  if (carrinho.length === 0 || finalizando) return;
+
+  const formaPagamento = document.getElementById('formaPagamento').value;
 
   const dados = {
-    forma_pagamento: document.getElementById('formaPagamento').value,
+    forma_pagamento: formaPagamento,
     itens: carrinho.map((item) => ({
       produto_id: item.produto_id,
       quantidade: item.quantidade,
     })),
   };
 
+  if (formaPagamento === 'dinheiro') {
+    const recebido = valorRecebidoCentavos();
+    if (recebido === null || recebido < totalCarrinhoCentavos()) {
+      mostrarErro(elementoErro, 'Informe um valor recebido igual ou maior que o total da venda.');
+      return;
+    }
+    dados.valor_recebido = recebido / 100;
+  }
+
+  finalizando = true;
+  document.getElementById('botaoFinalizar').disabled = true;
+
   try {
     const venda = await api.post('/vendas', dados);
-    alert(`Venda #${venda.id} finalizada! Total: ${formatarMoeda(venda.total)}`);
+    mostrarVendaConcluida(venda);
     limparCarrinho();
     await carregarProdutos(); // recarrega estoque atualizado
   } catch (erro) {
     mostrarErro(elementoErro, erro.message);
+  } finally {
+    finalizando = false;
+    atualizarPagamento();
   }
 }
 
@@ -199,6 +298,8 @@ document.getElementById('campoBusca').addEventListener('input', (evento) => {
 });
 
 document.getElementById('botaoFinalizar').addEventListener('click', finalizarVenda);
+document.getElementById('formaPagamento').addEventListener('change', atualizarPagamento);
+document.getElementById('valorRecebido').addEventListener('input', atualizarPagamento);
 document.getElementById('botaoLimparCarrinho').addEventListener('click', limparCarrinho);
 
 (async () => {

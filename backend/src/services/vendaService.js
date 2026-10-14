@@ -8,7 +8,11 @@ const ServiceError = require('../utils/ServiceError');
 // dá baixa no estoque e grava a venda — tudo dentro de uma única transação.
 // Se qualquer item falhar (produto inexistente ou estoque insuficiente), a
 // venda inteira é desfeita (rollback), evitando estoque inconsistente.
-async function finalizarVenda({ usuario_id, forma_pagamento, itens }) {
+// Pagamento em dinheiro: exige valor_recebido >= total e devolve o troco calculado.
+// A validação é feita aqui (servidor) e não só no navegador, porque o front pode
+// ser burlado. Todos os cálculos de dinheiro são em centavos (inteiros) pra evitar
+// erros de ponto flutuante tipo 0.1 + 0.2 = 0.30000000000000004.
+async function finalizarVenda({ usuario_id, forma_pagamento, itens, valor_recebido }) {
   if (!Array.isArray(itens) || itens.length === 0) {
     throw new ServiceError('A venda precisa ter pelo menos um item.');
   }
@@ -17,7 +21,7 @@ async function finalizarVenda({ usuario_id, forma_pagamento, itens }) {
   try {
     await connection.beginTransaction();
 
-    let total = 0;
+    let totalCentavos = 0;
     const itensProcessados = [];
 
     for (const item of itens) {
@@ -40,8 +44,24 @@ async function finalizarVenda({ usuario_id, forma_pagamento, itens }) {
       }
 
       const precoUnitario = produto.preco;
-      total += precoUnitario * quantidade;
+      totalCentavos += Math.round(Number(precoUnitario) * 100) * Number(quantidade);
       itensProcessados.push({ produto_id, quantidade, preco_unitario: precoUnitario });
+    }
+
+    const total = totalCentavos / 100;
+
+    let recebido = null;
+    let troco = null;
+    if (forma_pagamento === 'dinheiro') {
+      const recebidoCentavos = Math.round(Number(valor_recebido) * 100);
+      if (valor_recebido === undefined || valor_recebido === null || valor_recebido === '' || !Number.isFinite(recebidoCentavos)) {
+        throw new ServiceError('Informe o valor recebido do cliente para pagamento em dinheiro.');
+      }
+      if (recebidoCentavos < totalCentavos) {
+        throw new ServiceError('O valor recebido é menor que o total da venda.');
+      }
+      recebido = recebidoCentavos / 100;
+      troco = (recebidoCentavos - totalCentavos) / 100;
     }
 
     const vendaId = await vendaModel.criar({ usuario_id, total, forma_pagamento }, connection);
@@ -51,7 +71,10 @@ async function finalizarVenda({ usuario_id, forma_pagamento, itens }) {
     }
 
     await connection.commit();
-    return vendaModel.buscarPorId(vendaId);
+    const venda = await vendaModel.buscarPorId(vendaId);
+    // valor_recebido e troco não são gravados no banco; só voltam na resposta
+    // pra o operador ver o troco na tela (e vão no log de auditoria).
+    return { ...venda, valor_recebido: recebido, troco };
   } catch (err) {
     await connection.rollback();
     throw err;
